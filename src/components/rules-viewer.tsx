@@ -34,9 +34,9 @@ export function RulesViewer({ games }: { games: RuleGame[] }) {
         </select>
       </label>
       <ol className="mt-5 space-y-3 text-sm leading-6 text-slate-700">
-        {game.simplifiedRules.map((rule) => (
-          <li key={rule} className="rounded-2xl bg-slate-50 px-4 py-3">
-            {rule}
+        {game.simplifiedRules.map((rule, index) => (
+          <li key={index} className="rounded-2xl bg-slate-50 px-4 py-3">
+            <span className="mr-2 font-semibold text-slate-900">{index + 1}.</span>{rule}
           </li>
         ))}
       </ol>

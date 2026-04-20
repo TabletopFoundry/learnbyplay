@@ -53,10 +53,10 @@ export default async function GameDetailPage({ params }: PageProps) {
           <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600">{game.description}</p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Player count</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.minPlayers}-{game.maxPlayers}</p></div>
-            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Play time</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.playTimeMin}-{game.playTimeMax} min</p></div>
-            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Complexity</p><p className="mt-2 text-lg font-semibold text-slate-900">{getComplexityLabel(game.complexity)}</p></div>
-            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Age range</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.ageRange}</p></div>
+            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Player count</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.minPlayers}-{game.maxPlayers}</p></div>
+            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Play time</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.playTimeMin}-{game.playTimeMax} min</p></div>
+            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Complexity</p><p className="mt-2 text-lg font-semibold text-slate-900">{getComplexityLabel(game.complexity)}</p></div>
+            <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Age range</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.ageRange}</p></div>
           </div>
 
           <section className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
@@ -67,7 +67,7 @@ export default async function GameDetailPage({ params }: PageProps) {
                   <span key={skill} className="rounded-full bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700">{skill}</span>
                 ))}
               </div>
-              <h3 className="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Materials and setup</h3>
+              <h3 className="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Materials and setup</h3>
               <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
                 <li>Setup time: {game.setupTimeMin} minutes</li>
                 {game.materials.map((item) => <li key={item}>• {item}</li>)}
@@ -76,8 +76,8 @@ export default async function GameDetailPage({ params }: PageProps) {
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-slate-900">Student-friendly rules</h2>
               <ol className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-                {game.simplifiedRules.map((rule) => (
-                  <li key={rule} className="rounded-2xl bg-slate-50 px-4 py-3">{rule}</li>
+                {game.simplifiedRules.map((rule, index) => (
+                  <li key={index} className="rounded-2xl bg-slate-50 px-4 py-3"><span className="mr-2 font-semibold text-slate-900">{index + 1}.</span>{rule}</li>
                 ))}
               </ol>
             </div>
@@ -107,7 +107,7 @@ export default async function GameDetailPage({ params }: PageProps) {
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
               {lessons.map((lesson) => (
                 <article key={lesson.slug} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Grades {lesson.gradeBand}</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Grades {lesson.gradeBand}</p>
                   <h3 className="mt-2 text-xl font-semibold text-slate-900">{lesson.title}</h3>
                   <p className="mt-3 text-sm leading-6 text-slate-600">{lesson.summary}</p>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -117,7 +117,7 @@ export default async function GameDetailPage({ params }: PageProps) {
                   </div>
                   <div className="mt-6 flex flex-wrap gap-3">
                     <Link href={`/lessons/${lesson.slug}`} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">Open lesson</Link>
-                    <Link href={`/api/lessons/${lesson.slug}/pdf`} className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900">Download PDF</Link>
+                    <a href={`/api/lessons/${lesson.slug}/pdf`} download className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900">Download PDF</a>
                   </div>
                 </article>
               ))}

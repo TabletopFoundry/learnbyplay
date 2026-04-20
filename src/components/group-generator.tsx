@@ -16,6 +16,16 @@ export function GroupGenerator() {
   const [groupSize, setGroupSize] = useState(4);
   const [seed, setSeed] = useState(0);
 
+  const clampStudentCount = (value: number) => {
+    const parsed = Number(value) || 2;
+    return Math.min(Math.max(parsed, 2), 40);
+  };
+
+  const clampGroupSize = (value: number) => {
+    const parsed = Number(value) || 2;
+    return Math.min(Math.max(parsed, 2), 8);
+  };
+
   const groups = useMemo(() => {
     const students = Array.from({ length: studentCount }, (_, index) => `Student ${index + 1}`);
     const randomized = shuffle(students.map((student, index) => `${student}-${seed}-${index}`)).map((value) => value.split("-")[0]);
@@ -36,7 +46,8 @@ export function GroupGenerator() {
             min={2}
             max={40}
             value={studentCount}
-            onChange={(event) => setStudentCount(Number(event.target.value) || 2)}
+            onChange={(event) => setStudentCount(clampStudentCount(Number(event.target.value)))}
+            onBlur={(event) => setStudentCount(clampStudentCount(Number(event.target.value)))}
             className="rounded-2xl border border-slate-200 px-4 py-3"
           />
         </label>
@@ -47,7 +58,8 @@ export function GroupGenerator() {
             min={2}
             max={8}
             value={groupSize}
-            onChange={(event) => setGroupSize(Number(event.target.value) || 2)}
+            onChange={(event) => setGroupSize(clampGroupSize(Number(event.target.value)))}
+            onBlur={(event) => setGroupSize(clampGroupSize(Number(event.target.value)))}
             className="rounded-2xl border border-slate-200 px-4 py-3"
           />
         </label>

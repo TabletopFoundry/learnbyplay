@@ -43,13 +43,15 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
-        <Link href="/games" className="hover:text-slate-900">Browse games</Link>
-        <span>/</span>
-        <Link href={`/games/${game.slug}`} className="hover:text-slate-900">{game.name}</Link>
-        <span>/</span>
-        <span>{lesson.title}</span>
-      </div>
+      <nav aria-label="Breadcrumb">
+        <ol className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+          <li><Link href="/games" className="hover:text-slate-900">Browse games</Link></li>
+          <li aria-hidden="true">/</li>
+          <li><Link href={`/games/${game.slug}`} className="hover:text-slate-900">{game.name}</Link></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">{lesson.title}</li>
+        </ol>
+      </nav>
 
       <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
@@ -58,7 +60,7 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
           <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-600">{lesson.summary}</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <a href={`/api/lessons/${lesson.slug}/pdf?variant=${variant.duration}`} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
+          <a href={`/api/lessons/${lesson.slug}/pdf?variant=${variant.duration}`} download className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
             Download as PDF
           </a>
           <form action={toggleFavoriteLessonAction}>
@@ -70,10 +72,10 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
       </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Game</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.name}</p></div>
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Grade band</p><p className="mt-2 text-lg font-semibold text-slate-900">{lesson.gradeBand}</p></div>
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Selected format</p><p className="mt-2 text-lg font-semibold text-slate-900">{variant.label}</p></div>
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-500">Focus</p><p className="mt-2 text-lg font-semibold text-slate-900">{variant.focus}</p></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Game</p><p className="mt-2 text-lg font-semibold text-slate-900">{game.name}</p></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Grade band</p><p className="mt-2 text-lg font-semibold text-slate-900">{lesson.gradeBand}</p></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Selected format</p><p className="mt-2 text-lg font-semibold text-slate-900">{variant.label}</p></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Focus</p><p className="mt-2 text-lg font-semibold text-slate-900">{variant.focus}</p></div>
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">
@@ -143,7 +145,7 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">Assessment rubric</h2>
             <div className="mt-4 overflow-x-auto">
-              <table className="min-w-full text-left text-sm text-slate-600">
+              <table className="min-w-full text-left text-sm text-slate-600" aria-label="Assessment rubric">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-900">
                     <th className="px-3 py-3 font-semibold">Criterion</th>

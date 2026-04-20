@@ -21,8 +21,9 @@ export default function RootLayout({
     <html lang="en" className="h-full scroll-smooth">
       <body className="min-h-full bg-[var(--background)] font-sans text-slate-900 antialiased">
         <div className="flex min-h-screen flex-col">
+          <a href="#main-content" className="skip-to-content">Skip to main content</a>
           <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">{children}</main>
           <SiteFooter />
         </div>
       </body>

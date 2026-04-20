@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getDb } from "@/lib/db";
 
 function getRedirectTarget(formData: FormData, fallback: string) {
@@ -10,14 +11,49 @@ function getRedirectTarget(formData: FormData, fallback: string) {
   return typeof value === "string" && value.length > 0 ? value : fallback;
 }
 
-export async function createClassroomAction(formData: FormData) {
-  const name = String(formData.get("name") ?? "").trim();
-  const subject = String(formData.get("subject") ?? "Math");
-  const gradeBand = String(formData.get("gradeBand") ?? "3-5");
-  const studentCount = Number(formData.get("studentCount") ?? 0);
+function validateString(value: unknown, maxLength = 500): string {
+  const str = String(value ?? "").trim();
+  if (str.length > maxLength) throw new Error("Input too long");
+  return str;
+}
 
-  if (!name || Number.isNaN(studentCount) || studentCount <= 0) {
-    redirect("/dashboard?error=classroom");
+function validateEnum<T extends string>(value: unknown, allowed: readonly T[]): T {
+  const str = String(value ?? "");
+  if (!(allowed as readonly string[]).includes(str)) throw new Error(`Invalid value: ${str}`);
+  return str as T;
+}
+
+const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
+function validateDate(value: unknown): string {
+  const str = String(value ?? "").trim();
+  if (!ISO_DATE_REGEX.test(str)) throw new Error("Invalid date format");
+  const parsed = new Date(str);
+  if (Number.isNaN(parsed.getTime())) throw new Error("Invalid date");
+  return str;
+}
+
+export async function createClassroomAction(formData: FormData) {
+  let name: string;
+  let subject: string;
+  let gradeBand: string;
+  let studentCount: number;
+
+  try {
+    name = validateString(formData.get("name"), 200);
+    subject = validateEnum(formData.get("subject") ?? "Math", SUBJECTS);
+    gradeBand = validateEnum(formData.get("gradeBand") ?? "3-5", GRADE_BANDS);
+    studentCount = Number(formData.get("studentCount") ?? 0);
+  } catch {
+    redirect(`/dashboard?error=classroom&fields=validation`);
+  }
+
+  const errors: string[] = [];
+  if (!name) errors.push("name");
+  if (Number.isNaN(studentCount) || studentCount <= 0 || studentCount > 999) errors.push("studentCount");
+
+  if (errors.length > 0) {
+    redirect(`/dashboard?error=classroom&fields=${errors.join(",")}`);
   }
 
   const db = getDb();
@@ -30,14 +66,30 @@ export async function createClassroomAction(formData: FormData) {
 }
 
 export async function logSessionAction(formData: FormData) {
-  const classroomId = Number(formData.get("classroomId") ?? 0);
-  const gameSlug = String(formData.get("gameSlug") ?? "");
-  const lessonSlug = String(formData.get("lessonSlug") ?? "");
-  const sessionDate = String(formData.get("sessionDate") ?? "");
-  const notes = String(formData.get("notes") ?? "").trim();
+  let classroomId: number;
+  let gameSlug: string;
+  let lessonSlug: string;
+  let sessionDate: string;
+  let notes: string;
 
-  if (!classroomId || !gameSlug || !lessonSlug || !sessionDate) {
-    redirect("/dashboard?error=session");
+  try {
+    classroomId = Number(formData.get("classroomId") ?? 0);
+    gameSlug = validateString(formData.get("gameSlug"), 200);
+    lessonSlug = validateString(formData.get("lessonSlug"), 200);
+    sessionDate = validateDate(formData.get("sessionDate"));
+    notes = validateString(formData.get("notes"), 2000);
+  } catch {
+    redirect(`/dashboard?error=session&fields=validation`);
+  }
+
+  const errors: string[] = [];
+  if (!classroomId) errors.push("class");
+  if (!gameSlug) errors.push("game");
+  if (!lessonSlug) errors.push("lesson");
+  if (!sessionDate) errors.push("date");
+
+  if (errors.length > 0) {
+    redirect(`/dashboard?error=session&fields=${errors.join(",")}`);
   }
 
   const db = getDb();
@@ -50,7 +102,7 @@ export async function logSessionAction(formData: FormData) {
 }
 
 export async function toggleFavoriteLessonAction(formData: FormData) {
-  const lessonSlug = String(formData.get("lessonSlug") ?? "");
+  const lessonSlug = validateString(formData.get("lessonSlug"), 200);
   const redirectTo = getRedirectTarget(formData, "/dashboard");
 
   if (!lessonSlug) {

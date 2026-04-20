@@ -22,7 +22,7 @@ export default function PDPage() {
 
       {guide ? (
         <section className="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Featured guide</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Featured guide</p>
           <h2 className="mt-2 text-3xl font-semibold text-slate-900">{guide.title}</h2>
           <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">{guide.summary}</p>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">

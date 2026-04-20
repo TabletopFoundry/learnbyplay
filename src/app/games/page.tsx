@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/empty-state";
 import { GameArt } from "@/components/game-art";
+import { SubmitButton } from "@/components/submit-button";
+import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getGames, getNearMatches, getStandards } from "@/lib/data";
 import { getComplexityLabel } from "@/lib/utils";
 
@@ -44,20 +46,23 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[320px_1fr]">
-        <form className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-6 lg:h-fit">
-          <div className="space-y-4">
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-6 lg:h-fit">
+          <details className="lg:open" open>
+            <summary className="cursor-pointer text-lg font-semibold text-slate-900 lg:hidden">Filters</summary>
+            <form className="mt-4 lg:mt-0">
+              <div className="space-y-4">
             <label className="block text-sm font-medium text-slate-700">
               Subject
               <select name="subject" defaultValue={filters.subject ?? ""} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
                 <option value="">All subjects</option>
-                {['Math', 'Science', 'Social Studies', 'ELA', 'SEL'].map((subject) => <option key={subject} value={subject}>{subject}</option>)}
+                {SUBJECTS.map((subject) => <option key={subject} value={subject}>{subject}</option>)}
               </select>
             </label>
             <label className="block text-sm font-medium text-slate-700">
               Grade band
               <select name="gradeBand" defaultValue={filters.gradeBand ?? ""} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
                 <option value="">All grade bands</option>
-                {['K-2', '3-5', '6-8', '9-12'].map((gradeBand) => <option key={gradeBand} value={gradeBand}>{gradeBand}</option>)}
+                {GRADE_BANDS.map((gradeBand) => <option key={gradeBand} value={gradeBand}>{gradeBand}</option>)}
               </select>
             </label>
             <label className="block text-sm font-medium text-slate-700">
@@ -93,15 +98,17 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
             </label>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button type="submit" className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">Apply filters</button>
+            <SubmitButton label="Apply filters" pendingLabel="Filtering…" />
             <Link href="/games" className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900">Clear</Link>
           </div>
-        </form>
+            </form>
+          </details>
+        </div>
 
         <div>
           <div className="mb-5 flex items-center justify-between gap-3 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Results</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Results</p>
               <p className="mt-1 text-xl font-semibold text-slate-900">{games.length} games match your filters</p>
             </div>
             {filters.standard ? <p className="max-w-sm text-sm text-slate-600">Standard focus: {filters.standard}</p> : null}
@@ -126,7 +133,8 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {games.map((game) => (
-                <Link key={game.slug} href={`/games/${game.slug}`} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                <Link key={game.slug} href={`/games/${game.slug}`} aria-label={game.name} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                  <div aria-hidden="true">
                   <GameArt name={game.name} />
                   <div className="mt-4 flex flex-wrap gap-2">
                     {game.subjects.map((subject) => (
@@ -141,6 +149,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
                     <div className="rounded-2xl bg-slate-50 p-3"><dt className="font-semibold text-slate-900">Players</dt><dd>{game.minPlayers}-{game.maxPlayers}</dd></div>
                     <div className="rounded-2xl bg-slate-50 p-3"><dt className="font-semibold text-slate-900">Standards</dt><dd>{game.standards.length}</dd></div>
                   </dl>
+                  </div>
                 </Link>
               ))}
             </div>

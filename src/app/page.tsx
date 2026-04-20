@@ -94,7 +94,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="grid gap-5">
+        <div>
+          <h2 className="sr-only">Featured games</h2>
+          <div className="grid gap-5">
           {featuredGames.map((game) => (
             <Link
               key={game.slug}
@@ -107,19 +109,22 @@ export default function Home() {
                   <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
                     {game.subjects.join(" • ")}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold text-slate-900">{game.name}</h2>
+                  <h3 className="mt-2 text-2xl font-semibold text-slate-900">{game.name}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{game.tagline}</p>
-                  <p className="mt-3 text-sm text-slate-500">
+                  <p className="mt-3 text-sm text-slate-600">
                     {game.playTimeMin}-{game.playTimeMax} min • Grades {game.gradeBand}
                   </p>
                 </div>
               </div>
             </Link>
           ))}
+          </div>
         </div>
       </section>
 
-      <section className="mt-16 grid gap-6 lg:grid-cols-3">
+      <section className="mt-16">
+        <h2 className="sr-only">How LearnByPlay works</h2>
+        <div className="grid gap-6 lg:grid-cols-3">
         {[
           {
             title: "Find the right fit",
@@ -139,6 +144,7 @@ export default function Home() {
             <p className="mt-3 text-sm leading-6 text-slate-600">{item.body}</p>
           </div>
         ))}
+        </div>
       </section>
 
       <section className="mt-16">
@@ -167,7 +173,8 @@ export default function Home() {
               <figcaption className="mt-5 text-sm text-slate-300">
                 <span className="font-semibold text-white">{testimonial.name}</span>
                 <br />
-                {testimonial.role}
+                <span className="sr-only">Role: </span>
+                <span className="text-slate-400">{testimonial.role}</span>
               </figcaption>
             </figure>
           ))}
@@ -191,7 +198,7 @@ export default function Home() {
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
           {pricing.map((plan) => (
             <div key={plan.name} className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">
                 {plan.name}
               </p>
               <p className="mt-3 text-4xl font-semibold text-slate-900">{plan.price}</p>
