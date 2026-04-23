@@ -1,6 +1,40 @@
+# Dependencies
 node_modules/
+
+# Next.js build
 .next/
+out/
+build/
+
+# Database (SQLite)
 data/
 *.db
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Environment
 .env
 .env.local
+.env.production.local
+.env.development.local
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Editor / IDE
+.vscode/settings.json
+.idea/
+*.iml
+
+# Coverage & test output
+coverage/
+.nyc_output/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
