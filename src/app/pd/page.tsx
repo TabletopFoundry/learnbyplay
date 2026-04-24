@@ -1,7 +1,5 @@
 import { getPdArticles } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Professional development",
 };
@@ -29,8 +27,8 @@ export default function PDPage() {
             {guide.sections.map((section) => (
               <article key={section.heading} className="rounded-3xl bg-slate-50 p-6">
                 <h3 className="text-xl font-semibold text-slate-900">{section.heading}</h3>
-                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-                  {section.body.map((item) => <li key={item}>• {item}</li>)}
+                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 list-disc pl-5">
+                  {section.body.map((item) => <li key={item}>{item}</li>)}
                 </ul>
               </article>
             ))}
@@ -48,8 +46,8 @@ export default function PDPage() {
               {article.sections.map((section) => (
                 <div key={section.heading} className="rounded-2xl bg-slate-50 p-4">
                   <h3 className="font-semibold text-slate-900">{section.heading}</h3>
-                  <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-                    {section.body.map((item) => <li key={item}>• {item}</li>)}
+                  <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600 list-disc pl-5">
+                    {section.body.map((item) => <li key={item}>{item}</li>)}
                   </ul>
                 </div>
               ))}
@@ -67,8 +65,8 @@ export default function PDPage() {
             {adminFaq.sections.map((section) => (
               <div key={section.heading} className="rounded-3xl bg-slate-800 p-5">
                 <h3 className="text-xl font-semibold">{section.heading}</h3>
-                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-200">
-                  {section.body.map((item) => <li key={item}>• {item}</li>)}
+                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-200 list-disc pl-5">
+                  {section.body.map((item) => <li key={item}>{item}</li>)}
                 </ul>
               </div>
             ))}

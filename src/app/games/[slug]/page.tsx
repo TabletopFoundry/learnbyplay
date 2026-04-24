@@ -5,8 +5,6 @@ import { GameArt } from "@/components/game-art";
 import { getGameBySlug, getLessonsByGameSlug, getStandards } from "@/lib/data";
 import { getComplexityLabel } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
-
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -68,9 +66,9 @@ export default async function GameDetailPage({ params }: PageProps) {
                 ))}
               </div>
               <h3 className="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Materials and setup</h3>
-              <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600 list-disc pl-5">
                 <li>Setup time: {game.setupTimeMin} minutes</li>
-                {game.materials.map((item) => <li key={item}>• {item}</li>)}
+                {game.materials.map((item) => <li key={item}>{item}</li>)}
               </ul>
             </div>
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">

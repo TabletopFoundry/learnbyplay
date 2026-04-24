@@ -7,8 +7,6 @@ import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getGames, getNearMatches, getStandards } from "@/lib/data";
 import { getComplexityLabel } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Game browser",
 };

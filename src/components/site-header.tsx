@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/games", label: "Browse games" },
@@ -14,6 +14,47 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+    toggleRef.current?.focus();
+  }, []);
+
+  // Move focus to first nav link when menu opens
+  useEffect(() => {
+    if (menuOpen && navRef.current) {
+      const firstLink = navRef.current.querySelector<HTMLAnchorElement>("a");
+      firstLink?.focus();
+    }
+  }, [menuOpen]);
+
+  // Escape key handler
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeMenu();
+      }
+      // Focus trap: cycle focus within the nav
+      if (e.key === "Tab" && navRef.current) {
+        const focusable = navRef.current.querySelectorAll<HTMLElement>("a, button");
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen, closeMenu]);
 
   return (
     <header role="banner" className="border-b border-slate-200/80 bg-white/90 backdrop-blur">
@@ -40,6 +81,7 @@ export function SiteHeader() {
             </Link>
             <button
               type="button"
+              ref={toggleRef}
               onClick={() => setMenuOpen((open) => !open)}
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl border border-slate-200 p-2.5 text-slate-700 transition hover:border-amber-300 hover:text-slate-900 sm:hidden"
               aria-expanded={menuOpen}
@@ -82,14 +124,14 @@ export function SiteHeader() {
 
         {/* Mobile navigation drawer */}
         {menuOpen && (
-          <nav id="mobile-nav" role="navigation" aria-label="Mobile navigation" className="flex flex-col gap-2 border-t border-slate-200 pt-4 sm:hidden">
+          <nav ref={navRef} id="mobile-nav" aria-label="Mobile navigation" className="flex flex-col gap-2 border-t border-slate-200 pt-4 sm:hidden">
             {links.map((link) => {
               const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={closeMenu}
                   aria-current={isActive ? "page" : undefined}
                   className={`rounded-2xl px-4 py-3 text-sm font-medium transition ${
                     isActive
@@ -103,7 +145,7 @@ export function SiteHeader() {
             })}
             <Link
               href="/games"
-              onClick={() => setMenuOpen(false)}
+              onClick={closeMenu}
               className="mt-1 rounded-full bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-700"
             >
               Explore the catalog

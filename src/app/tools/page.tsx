@@ -1,20 +1,14 @@
 import { GroupGenerator } from "@/components/group-generator";
 import { RulesViewer } from "@/components/rules-viewer";
 import { SessionTimer } from "@/components/session-timer";
-import { getGames } from "@/lib/data";
-
-export const dynamic = "force-dynamic";
+import { getRulesViewerGames } from "@/lib/data";
 
 export const metadata = {
   title: "Classroom tools",
 };
 
 export default function ToolsPage() {
-  const games = getGames().slice(0, 15).map((game) => ({
-    slug: game.slug,
-    name: game.name,
-    simplifiedRules: game.simplifiedRules,
-  }));
+  const games = getRulesViewerGames();
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

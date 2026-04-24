@@ -29,7 +29,7 @@ export async function GET(
   return new Response(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${lesson.slug}.pdf"`,
+      "Content-Disposition": `attachment; filename="${lesson.slug.replace(/[^a-z0-9_-]/gi, "_")}.pdf"`,
     },
   });
 }

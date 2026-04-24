@@ -15,32 +15,37 @@ export function SessionTimer() {
   const [completed, setCompleted] = useState(false);
   const hasStartedRef = useRef(false);
 
+  const phaseRef = useRef(currentPhase);
+  phaseRef.current = currentPhase;
+
   useEffect(() => {
     if (!running || completed) {
       return;
     }
 
     const interval = window.setInterval(() => {
-      setSecondsLeft((value) => {
-        if (value > 1) {
-          return value - 1;
-        }
-
-        // Last phase reaching zero — mark session complete
-        if (currentPhase >= defaultPhases.length - 1) {
-          setRunning(false);
-          setCompleted(true);
-          return 0;
-        }
-
-        const nextPhase = currentPhase + 1;
-        setCurrentPhase(nextPhase);
-        return defaultPhases[nextPhase].minutes * 60;
+      setSecondsLeft((prev) => {
+        if (prev > 1) return prev - 1;
+        return 0;
       });
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [currentPhase, running, completed]);
+  }, [running, completed]);
+
+  // Separate effect for phase transitions when timer reaches zero
+  useEffect(() => {
+    if (secondsLeft === 0 && running && !completed) {
+      if (phaseRef.current >= defaultPhases.length - 1) {
+        setRunning(false);
+        setCompleted(true);
+      } else {
+        const next = phaseRef.current + 1;
+        setCurrentPhase(next);
+        setSecondsLeft(defaultPhases[next].minutes * 60);
+      }
+    }
+  }, [secondsLeft, running, completed]);
 
   // Only announce phase changes after user has started the timer
   useEffect(() => {
@@ -115,7 +120,7 @@ export function SessionTimer() {
             ? "All phases complete"
             : `${phase.minutes} minutes planned for this phase`}
         </p>
-        <p className="sr-only" aria-live="assertive">
+        <p className="sr-only" aria-live="polite">
           {completed ? "Session timer complete" : `${Math.floor(secondsLeft / 60)} minutes and ${secondsLeft % 60} seconds remaining`}
         </p>
       </div>

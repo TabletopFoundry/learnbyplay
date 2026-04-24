@@ -1,10 +1,11 @@
 import Link from "next/link";
 
-import { createClassroomAction, logSessionAction } from "@/app/actions";
+import { deleteClassroomAction, deleteSessionAction, logSessionAction } from "@/app/actions";
+import { ClassroomForm } from "@/components/classroom-form";
+import { ConfirmDeleteForm } from "@/components/confirm-delete-form";
 import { EmptyState } from "@/components/empty-state";
 import { FlashBanner } from "@/components/flash-banner";
 import { SessionLogger } from "@/components/session-logger";
-import { SubmitButton } from "@/components/submit-button";
 import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getDashboardSnapshot, getGames, getAllLessonsGroupedByGame } from "@/lib/data";
 import type { Classroom, LessonPlan, SessionRecord, SkillHeatmapEntry } from "@/lib/types";
@@ -36,6 +37,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   const created = params.created === "1";
   const logged = params.logged === "1";
+  const deleted = typeof params.deleted === "string" ? params.deleted : undefined;
   const error = typeof params.error === "string" ? params.error : undefined;
   const errorFields = typeof params.fields === "string" ? params.fields.split(",") : [];
 
@@ -49,6 +51,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
       {created ? <FlashBanner message="Class created successfully." variant="success" /> : null}
       {logged ? <FlashBanner message="Session logged successfully." variant="success" /> : null}
+      {deleted === "classroom" ? <FlashBanner message="Classroom deleted." variant="success" /> : null}
+      {deleted === "session" ? <FlashBanner message="Session deleted." variant="success" /> : null}
       {error ? <FlashBanner
         message={error === "classroom"
           ? `Please fix the following field${errorFields.length > 1 ? "s" : ""}: ${errorFields.join(", ") || "all required fields"}.`
@@ -72,27 +76,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             </div>
             <p className="text-sm text-slate-600">Manual entry for the MVP</p>
           </div>
-          <form action={createClassroomAction} className="mt-6 grid gap-4 md:grid-cols-2">
-            <label className="text-sm font-medium text-slate-700">Class name
-              <input name="name" required className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3" placeholder="Room 22 Fraction Lab" />
-            </label>
-            <label className="text-sm font-medium text-slate-700">Subject
-              <select name="subject" className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
-                {SUBJECTS.map((subject) => <option key={subject}>{subject}</option>)}
-              </select>
-            </label>
-            <label className="text-sm font-medium text-slate-700">Grade band
-              <select name="gradeBand" className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3">
-                {GRADE_BANDS.map((gradeBand) => <option key={gradeBand}>{gradeBand}</option>)}
-              </select>
-            </label>
-            <label className="text-sm font-medium text-slate-700">Student count
-              <input name="studentCount" type="number" min={1} required className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3" placeholder="24" />
-            </label>
-            <div className="md:col-span-2">
-              <SubmitButton label="Create class" pendingLabel="Creating…" />
-            </div>
-          </form>
+          <ClassroomForm subjects={SUBJECTS} gradeBands={GRADE_BANDS} />
           <div className="mt-8 overflow-x-auto" tabIndex={0} role="region" aria-label="Classrooms table, scroll for more">
             <table className="min-w-full text-left text-sm text-slate-600" aria-label="Classrooms">
               <thead>
@@ -101,6 +85,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                   <th className="px-3 py-3 font-semibold">Subject</th>
                   <th className="px-3 py-3 font-semibold">Grade</th>
                   <th className="px-3 py-3 font-semibold">Students</th>
+                  <th className="px-3 py-3 font-semibold"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -110,6 +95,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                     <td className="px-3 py-3">{classroom.subject}</td>
                     <td className="px-3 py-3">{classroom.gradeBand}</td>
                     <td className="px-3 py-3">{classroom.studentCount}</td>
+                    <td className="px-3 py-3">
+                      <ConfirmDeleteForm
+                        action={deleteClassroomAction}
+                        hiddenFields={{ id: classroom.id }}
+                        confirmMessage="Delete classroom and all its sessions?"
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -136,12 +128,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                   <th className="px-3 py-3 font-semibold">Class</th>
                   <th className="px-3 py-3 font-semibold">Game</th>
                   <th className="px-3 py-3 font-semibold">Lesson</th>
+                  <th className="px-3 py-3 font-semibold"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
                 {snapshot.sessions.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-3 py-8 text-center text-sm text-slate-600">
+                    <td colSpan={5} className="px-3 py-8 text-center text-sm text-slate-600">
                       No sessions logged yet. Use the form above to log your first classroom session.
                     </td>
                   </tr>
@@ -152,6 +145,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                       <td className="px-3 py-3">{session.classroomName}</td>
                       <td className="px-3 py-3 font-semibold text-slate-900">{session.gameName}</td>
                       <td className="px-3 py-3">{session.lessonTitle}</td>
+                      <td className="px-3 py-3">
+                        <ConfirmDeleteForm
+                          action={deleteSessionAction}
+                          hiddenFields={{ id: session.id }}
+                          confirmMessage="Delete this session?"
+                        />
+                      </td>
                     </tr>
                   ))
                 )}

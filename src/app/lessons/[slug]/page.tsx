@@ -5,8 +5,6 @@ import { toggleFavoriteLessonAction } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { getGameBySlug, getLessonBySlug, getStandards, isFavoriteLesson } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
-
 type PageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -90,14 +88,14 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
         <div className="space-y-8">
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">Learning objectives</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-              {lesson.learningObjectives.map((item) => <li key={item}>• {item}</li>)}
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 list-disc pl-5">
+              {lesson.learningObjectives.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </section>
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">Materials needed</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-              {lesson.materialsNeeded.map((item) => <li key={item}>• {item}</li>)}
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 list-disc pl-5">
+              {lesson.materialsNeeded.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </section>
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -116,14 +114,14 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
         <div className="space-y-8">
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">Pre-game activity</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-              {lesson.preGameActivity.map((item) => <li key={item}>• {item}</li>)}
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 list-disc pl-5">
+              {lesson.preGameActivity.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </section>
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">Gameplay facilitation guide</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-              {lesson.facilitationGuide.map((item) => <li key={item}>• {item}</li>)}
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 list-disc pl-5">
+              {lesson.facilitationGuide.map((item) => <li key={item}>{item}</li>)}
             </ul>
             <div className="mt-6 rounded-2xl bg-amber-50 p-4">
               <p className="text-sm font-semibold text-amber-900">{variant.label}</p>
@@ -138,8 +136,8 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
           </section>
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">Post-game reflection</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-              {lesson.postGameReflection.map((item) => <li key={item}>• {item}</li>)}
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 list-disc pl-5">
+              {lesson.postGameReflection.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </section>
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
