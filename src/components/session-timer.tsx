@@ -10,13 +10,16 @@ const defaultPhases = [
 
 export function SessionTimer() {
   const [currentPhase, setCurrentPhase] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(defaultPhases[0].minutes * 60);
+  const [secondsLeft, setSecondsLeft] = useState(defaultPhases[0]!.minutes * 60);
   const [running, setRunning] = useState(false);
   const [completed, setCompleted] = useState(false);
   const hasStartedRef = useRef(false);
 
   const phaseRef = useRef(currentPhase);
-  phaseRef.current = currentPhase;
+
+  useEffect(() => {
+    phaseRef.current = currentPhase;
+  }, [currentPhase]);
 
   useEffect(() => {
     if (!running || completed) {
@@ -42,7 +45,7 @@ export function SessionTimer() {
       } else {
         const next = phaseRef.current + 1;
         setCurrentPhase(next);
-        setSecondsLeft(defaultPhases[next].minutes * 60);
+        setSecondsLeft(defaultPhases[next]!.minutes * 60);
       }
     }
   }, [secondsLeft, running, completed]);
@@ -55,7 +58,7 @@ export function SessionTimer() {
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(new SpeechSynthesisUtterance("Session complete"));
       } else {
-        const message = `Phase ${currentPhase + 1}: ${defaultPhases[currentPhase].label}`;
+        const message = `Phase ${currentPhase + 1}: ${defaultPhases[currentPhase]!.label}`;
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(new SpeechSynthesisUtterance(message));
       }
@@ -79,7 +82,7 @@ export function SessionTimer() {
     if (completed) {
       setCompleted(false);
       setCurrentPhase(0);
-      setSecondsLeft(defaultPhases[0].minutes * 60);
+      setSecondsLeft(defaultPhases[0]!.minutes * 60);
     }
     setRunning((value) => !value);
   };
@@ -88,7 +91,7 @@ export function SessionTimer() {
     setRunning(false);
     setCompleted(false);
     setCurrentPhase(0);
-    setSecondsLeft(defaultPhases[0].minutes * 60);
+    setSecondsLeft(defaultPhases[0]!.minutes * 60);
   };
 
   const handleNextPhase = () => {
@@ -96,7 +99,7 @@ export function SessionTimer() {
     hasStartedRef.current = true;
     const nextPhase = currentPhase + 1;
     setCurrentPhase(nextPhase);
-    setSecondsLeft(defaultPhases[nextPhase].minutes * 60);
+    setSecondsLeft(defaultPhases[nextPhase]!.minutes * 60);
   };
 
   return (
@@ -108,7 +111,7 @@ export function SessionTimer() {
             Session complete — all phases finished
           </span>
         ) : (
-          <>Current phase: {phase.label}</>
+          <>Current phase: {phase?.label ?? "Unknown"}</>
         )}
       </div>
       <div className="mt-5 text-center">
@@ -118,7 +121,7 @@ export function SessionTimer() {
         <p className="mt-2 text-sm text-slate-600" aria-live="polite">
           {completed
             ? "All phases complete"
-            : `${phase.minutes} minutes planned for this phase`}
+            : `${phase?.minutes ?? 0} minutes planned for this phase`}
         </p>
         <p className="sr-only" aria-live="polite">
           {completed ? "Session timer complete" : `${Math.floor(secondsLeft / 60)} minutes and ${secondsLeft % 60} seconds remaining`}

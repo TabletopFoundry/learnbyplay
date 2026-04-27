@@ -24,6 +24,10 @@ export async function GET(
   const selectedVariant = Number(request.nextUrl.searchParams.get("variant") ?? 45);
   const variant = lesson.variants.find((entry) => entry.duration === selectedVariant) ?? lesson.variants[0];
 
+  if (!variant) {
+    return new Response("No lesson variant available", { status: 404 });
+  }
+
   const bytes = await generateLessonPdf(lesson, game, variant);
 
   return new Response(Buffer.from(bytes), {

@@ -35,6 +35,9 @@ export default async function LessonDetailPage({ params, searchParams }: PagePro
   const search = await searchParams;
   const selectedVariant = Number(Array.isArray(search.variant) ? search.variant[0] : search.variant) || 45;
   const variant = lesson.variants.find((entry) => entry.duration === selectedVariant) ?? lesson.variants[0];
+  if (!variant) {
+    notFound();
+  }
   const favorite = isFavoriteLesson(lesson.slug);
   const standards = getStandards().filter((standard) => lesson.standards.includes(standard.code));
   const redirectTo = `/lessons/${lesson.slug}?variant=${variant.duration}`;

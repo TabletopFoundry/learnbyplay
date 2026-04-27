@@ -1,0 +1,11 @@
+# Default code owners for all files
+* @josedab
+
+# Frontend components
+/src/components/ @josedab
+
+# Data layer and database
+/src/lib/ @josedab
+
+# CI/CD configuration
+/.github/ @josedab

@@ -2,6 +2,7 @@ import { getPdArticles } from "@/lib/data";
 
 export const metadata = {
   title: "Professional development",
+  description: "Guides, best practices, and administrator-ready justification for bringing game-based learning into classrooms.",
 };
 
 export default function PDPage() {

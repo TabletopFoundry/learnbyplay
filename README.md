@@ -131,6 +131,9 @@ docs/
 | `/tools` | Classroom tools — group generator, timer, rules viewer |
 | `/pd` | Professional development articles and admin FAQ |
 | `/api/lessons/[slug]/pdf` | PDF export endpoint |
+| `/api/health` | Health check endpoint (JSON) |
+| `/sitemap.xml` | Auto-generated sitemap |
+| `/robots.txt` | Search engine directives |
 
 ## 🌱 Seed Data
 

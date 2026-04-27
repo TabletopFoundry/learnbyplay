@@ -5,6 +5,7 @@ import { getRulesViewerGames } from "@/lib/data";
 
 export const metadata = {
   title: "Classroom tools",
+  description: "Random group generator, session timer with phase announcements, and simplified rules viewer to keep classroom gameplay organized.",
 };
 
 export default function ToolsPage() {

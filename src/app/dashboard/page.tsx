@@ -15,6 +15,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Teacher dashboard",
+  description: "Manage classrooms, track game usage sessions, monitor skill coverage, and organize your favorite lesson plans.",
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

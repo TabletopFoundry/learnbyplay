@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from "react";
 
-function shuffle<T>(items: T[]) {
+function shuffle<T>(items: T[]): T[] {
   const copy = [...items];
   for (let index = copy.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+    const temp = copy[index];
+    copy[index] = copy[swapIndex]!;
+    copy[swapIndex] = temp!;
   }
   return copy;
 }
@@ -28,7 +30,7 @@ export function GroupGenerator() {
 
   const groups = useMemo(() => {
     const students = Array.from({ length: studentCount }, (_, index) => `Student ${index + 1}`);
-    const randomized = shuffle(students.map((student, index) => `${student}-${seed}-${index}`)).map((value) => value.split("-")[0]);
+    const randomized = shuffle(students.map((student, index) => `${student}-${seed}-${index}`)).map((value) => value.split("-")[0] ?? "");
     const result: string[][] = [];
     for (let index = 0; index < randomized.length; index += groupSize) {
       result.push(randomized.slice(index, index + groupSize));

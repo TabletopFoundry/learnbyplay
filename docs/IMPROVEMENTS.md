@@ -99,6 +99,94 @@ LearnByPlay is a polished MVP with strong UI/UX, accessibility foundations, and 
 
 ---
 
+### ✅ IMP-9: Added `CODEOWNERS` file
+
+**What**: Created `.github/CODEOWNERS` mapping code ownership for the full repo, components, data layer, and CI/CD configuration.
+
+**Why**: Auto-assigns reviewers on PRs, ensuring the right people are notified for changes in their areas of responsibility.
+
+---
+
+### ✅ IMP-10: Added Dependabot configuration
+
+**What**: Created `.github/dependabot.yml` with weekly npm and GitHub Actions dependency updates, with smart grouping for Next.js, React, Tailwind, and dev tooling packages.
+
+**Why**: Automated dependency updates are critical for security patching and staying current. Grouping reduces PR noise.
+
+---
+
+### ✅ IMP-11: Added `robots.ts` and `sitemap.ts` for SEO
+
+**What**: Created Next.js native `robots.ts` and `sitemap.ts` route files that auto-generate `/robots.txt` and `/sitemap.xml` from the database.
+
+**Why**: SEO readiness is essential for discoverability. The sitemap dynamically includes all games and lesson plans.
+
+---
+
+### ✅ IMP-12: Enhanced metadata with Open Graph, Twitter Cards, and viewport
+
+**What**: Added comprehensive metadata to the root layout including Open Graph, Twitter Card, keywords, and viewport configuration. Added page-specific descriptions to all route pages.
+
+**Why**: Social sharing generates preview cards. Proper metadata improves search engine ranking and accessibility.
+
+---
+
+### ✅ IMP-13: Security headers and Next.js config hardening
+
+**What**: Added `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and `X-DNS-Prefetch-Control` security headers. Disabled `X-Powered-By` header. Enabled React strict mode.
+
+**Why**: Security headers are a baseline defense against common web vulnerabilities (MIME sniffing, clickjacking, permission abuse).
+
+---
+
+### ✅ IMP-14: TypeScript strictness upgrades
+
+**What**: Upgraded `target` from ES2017 to ES2022 for modern output. Added `noUncheckedIndexedAccess` and fixed all resulting type errors across 4 files.
+
+**Why**: `noUncheckedIndexedAccess` catches real bugs where array/object index access could be undefined. ES2022 enables modern syntax like top-level await and `Array.at()`.
+
+---
+
+### ✅ IMP-15: Fixed ESLint violation in session-timer
+
+**What**: Fixed `react-hooks/refs` lint error where `phaseRef.current` was being assigned during render. Moved the assignment into a `useEffect`.
+
+**Why**: Assigning refs during render can cause stale values and missed updates. This was the only lint error in the codebase.
+
+---
+
+### ✅ IMP-16: Added health check API endpoint
+
+**What**: Created `/api/health` endpoint returning JSON with database connectivity status and game count.
+
+**Why**: Health checks are essential for monitoring, load balancers, and deployment readiness verification.
+
+---
+
+### ✅ IMP-17: Added CHANGELOG.md
+
+**What**: Created a Keep a Changelog formatted CHANGELOG documenting the v0.1.0 release features.
+
+**Why**: Changelogs communicate project progress to users and contributors and are expected by the open-source community.
+
+---
+
+### ✅ IMP-18: Updated .nvmrc to Node 22 LTS
+
+**What**: Updated `.nvmrc` from Node 20 to Node 22, matching the CI matrix and current LTS.
+
+**Why**: Node 22 is the active LTS with performance improvements and modern features.
+
+---
+
+### ✅ IMP-19: Added CI permissions and security
+
+**What**: Added explicit `permissions: contents: read` to CI workflow following least-privilege principle.
+
+**Why**: Explicit permissions prevent privilege escalation in compromised GitHub Actions steps.
+
+---
+
 ## Remaining Recommendations (Not Yet Implemented)
 
 ### Quick Wins (< 1 day each)
@@ -107,8 +195,6 @@ LearnByPlay is a polished MVP with strong UI/UX, accessibility foundations, and 
 |---|---------------|--------|--------|
 | R-1 | Add Prettier with `prettier-plugin-tailwindcss` | Eliminate all formatting debates | 30 min |
 | R-2 | Remove committed WAL/SHM files: `git rm --cached data/learnbyplay.db-shm data/learnbyplay.db-wal` | Stop repo bloat immediately | 5 min |
-| R-3 | Add `robots.txt` and `sitemap.xml` generation | SEO readiness | 30 min |
-| R-4 | Add `CODEOWNERS` file | Auto-assign reviewers | 10 min |
 
 ### Medium Effort (1 day – 1 week)
 
@@ -140,14 +226,14 @@ Repository Basics:
 [x] CONTRIBUTING.md
 [x] Issue templates
 [x] PR template
-[ ] CODEOWNERS
+[x] CODEOWNERS
 
 Automation:
 [x] CI running on PRs
 [x] Automated linting
 [x] Automated type checking
 [x] Build verification
-[ ] Dependency updates (Dependabot/Renovate)
+[x] Dependency updates (Dependabot)
 [ ] Release automation
 [ ] Security scanning
 
@@ -156,7 +242,7 @@ Documentation:
 [x] Architecture overview (in README)
 [ ] Dedicated docs site
 [x] Environment variable documentation (.env.example)
-[ ] Changelog
+[x] Changelog
 [ ] ADRs
 
 Community:
@@ -170,7 +256,7 @@ Community:
 
 ## 90-Day Roadmap
 
-### Days 1-7: Foundation ✅ (Mostly Complete)
+### Days 1-7: Foundation ✅ (Complete)
 - [x] Enhanced README with badges and architecture
 - [x] `.gitignore` hardened
 - [x] `.editorconfig` added
@@ -178,17 +264,26 @@ Community:
 - [x] `CONTRIBUTING.md` added
 - [x] `LICENSE` added
 - [x] Issue and PR templates added
-- [x] CI pipeline improved
+- [x] CI pipeline improved with permissions
+- [x] Add CODEOWNERS
+- [x] Add Dependabot configuration
+- [x] Add `robots.ts` and `sitemap.ts` for SEO
+- [x] Enhanced metadata (Open Graph, Twitter Cards, page descriptions)
+- [x] Security headers and Next.js config hardening
+- [x] TypeScript strictness upgrades (`noUncheckedIndexedAccess`, ES2022 target)
+- [x] Fixed lint violation in session-timer
+- [x] Added health check API endpoint
+- [x] Added CHANGELOG.md
+- [x] Updated .nvmrc to Node 22 LTS
 - [ ] Add Prettier configuration
 - [ ] Remove committed WAL/SHM files from git history
-- [ ] Add CODEOWNERS
 
 ### Days 8-30: Core Quality
 - [ ] Set up Vitest and write data layer unit tests
 - [ ] Add React Testing Library for key component tests
 - [ ] Add Playwright for E2E smoke tests
-- [ ] Configure Dependabot for automated dependency updates
 - [ ] Add Prettier with Tailwind plugin and pre-commit hooks
+- [ ] Remove committed WAL/SHM files from git history
 
 ### Days 31-60: Polish & Documentation
 - [ ] Create architecture decision records (ADRs) for key choices
