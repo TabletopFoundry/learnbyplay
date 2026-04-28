@@ -13,6 +13,7 @@ export function SessionTimer() {
   const [secondsLeft, setSecondsLeft] = useState(defaultPhases[0]!.minutes * 60);
   const [running, setRunning] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const hasStartedRef = useRef(false);
 
   const phaseRef = useRef(currentPhase);
@@ -50,9 +51,10 @@ export function SessionTimer() {
     }
   }, [secondsLeft, running, completed]);
 
-  // Only announce phase changes after user has started the timer
+  // Only announce phase changes after user has started the timer and opted in
   useEffect(() => {
     if (!hasStartedRef.current) return;
+    if (!voiceEnabled) return;
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       if (completed) {
         window.speechSynthesis.cancel();
@@ -63,7 +65,7 @@ export function SessionTimer() {
         window.speechSynthesis.speak(new SpeechSynthesisUtterance(message));
       }
     }
-  }, [currentPhase, completed]);
+  }, [currentPhase, completed, voiceEnabled]);
 
   const timeLabel = useMemo(() => {
     const minutes = Math.floor(secondsLeft / 60)
@@ -104,7 +106,7 @@ export function SessionTimer() {
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" role="region" aria-label="Session timer">
-      <div aria-live="polite" className="rounded-2xl bg-amber-50 p-4 text-sm font-medium text-amber-900">
+      <div className="rounded-2xl bg-amber-50 p-4 text-sm font-medium text-amber-900">
         {completed ? (
           <span>
             <span aria-hidden="true">✓ </span>
@@ -118,13 +120,15 @@ export function SessionTimer() {
         <div className="text-6xl font-semibold tracking-tight text-slate-900" aria-live="off" aria-atomic="true">
           {timeLabel}
         </div>
-        <p className="mt-2 text-sm text-slate-600" aria-live="polite">
+        <p className="mt-2 text-sm text-slate-600">
           {completed
             ? "All phases complete"
             : `${phase?.minutes ?? 0} minutes planned for this phase`}
         </p>
         <p className="sr-only" aria-live="polite">
-          {completed ? "Session timer complete" : `${Math.floor(secondsLeft / 60)} minutes and ${secondsLeft % 60} seconds remaining`}
+          {completed
+            ? "Session timer complete"
+            : `Phase ${currentPhase + 1}: ${phase?.label}. ${Math.floor(secondsLeft / 60)} minutes remaining.`}
         </p>
       </div>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -149,6 +153,14 @@ export function SessionTimer() {
           className="rounded-full border border-slate-200 px-6 py-3.5 text-base font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Next phase
+        </button>
+        <button
+          type="button"
+          onClick={() => setVoiceEnabled((v) => !v)}
+          className="rounded-full border border-slate-200 px-6 py-3.5 text-base font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900"
+          aria-pressed={voiceEnabled}
+        >
+          {voiceEnabled ? "🔊 Voice on" : "🔇 Voice off"}
         </button>
       </div>
       <div className="mt-6 grid gap-3 md:grid-cols-3">

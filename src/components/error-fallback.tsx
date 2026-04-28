@@ -11,8 +11,8 @@ export function ErrorFallback({ title, description, buttonLabel = "Try again", r
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8">
       <div className="rounded-3xl border border-rose-200 bg-white p-8 shadow-sm">
-        <h1 className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-600">{title}</h1>
-        <p className="mt-3 text-3xl font-semibold text-slate-900">{description}</p>
+        <h1 className="mt-3 text-3xl font-semibold text-slate-900">{title}</h1>
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-600">{description}</p>
         <button
           type="button"
           onClick={() => reset()}

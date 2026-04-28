@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
 
-import { getGames, getLessonsByGameSlug } from "@/lib/data";
-
-const BASE_URL = "https://learnbyplay.example.com";
+import { BASE_URL } from "@/lib/constants";
+import { getGames, getAllLessonsGroupedByGame } from "@/lib/data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const games = getGames();
+  const lessonsByGame = getAllLessonsGroupedByGame();
 
   const gameEntries: MetadataRoute.Sitemap = games.map((game) => ({
     url: `${BASE_URL}/games/${game.slug}`,
@@ -14,14 +14,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  const lessonEntries: MetadataRoute.Sitemap = games.flatMap((game) =>
-    getLessonsByGameSlug(game.slug).map((lesson) => ({
+  const lessonEntries: MetadataRoute.Sitemap = Object.values(lessonsByGame)
+    .flat()
+    .map((lesson) => ({
       url: `${BASE_URL}/lessons/${lesson.slug}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
-    })),
-  );
+    }));
 
   return [
     {

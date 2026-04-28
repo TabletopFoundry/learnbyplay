@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getDb } from "@/lib/db";
+import { sanitizeRedirectTo, validateDate, validateEnum, validatePositiveInt, validateString, ValidationError } from "@/lib/validation";
 
 export type ActionState = {
   success: boolean;
@@ -12,50 +13,10 @@ export type ActionState = {
   message?: string;
 } | null;
 
-class ValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
-
-function sanitizeRedirectTo(value: string, fallback: string): string {
-  if (!value.startsWith("/") || value.startsWith("//")) return fallback;
-  // Strip any protocol-relative or encoded tricks
-  try {
-    const url = new URL(value, "http://localhost");
-    return url.pathname + url.search + url.hash;
-  } catch {
-    return fallback;
-  }
-}
-
 function getRedirectTarget(formData: FormData, fallback: string) {
   const value = formData.get("redirectTo");
   if (typeof value !== "string" || value.length === 0) return fallback;
   return sanitizeRedirectTo(value, fallback);
-}
-
-function validateString(value: unknown, maxLength = 500): string {
-  const str = String(value ?? "").trim();
-  if (str.length > maxLength) throw new ValidationError("Input too long");
-  return str;
-}
-
-function validateEnum<T extends string>(value: unknown, allowed: readonly T[]): T {
-  const str = String(value ?? "");
-  if (!(allowed as readonly string[]).includes(str)) throw new ValidationError(`Invalid value: ${str}`);
-  return str as T;
-}
-
-const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-
-function validateDate(value: unknown): string {
-  const str = String(value ?? "").trim();
-  if (!ISO_DATE_REGEX.test(str)) throw new ValidationError("Invalid date format");
-  const parsed = new Date(str);
-  if (Number.isNaN(parsed.getTime())) throw new ValidationError("Invalid date");
-  return str;
 }
 
 export async function createClassroomAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
@@ -101,7 +62,7 @@ export async function logSessionAction(_prevState: ActionState, formData: FormDa
   let notes: string;
 
   try {
-    classroomId = Number(formData.get("classroomId") ?? 0);
+    classroomId = validatePositiveInt(formData.get("classroomId"));
     gameSlug = validateString(formData.get("gameSlug"), 200);
     lessonSlug = validateString(formData.get("lessonSlug"), 200);
     sessionDate = validateDate(formData.get("sessionDate"));
@@ -114,7 +75,6 @@ export async function logSessionAction(_prevState: ActionState, formData: FormDa
   }
 
   const errors: string[] = [];
-  if (!classroomId) errors.push("class");
   if (!gameSlug) errors.push("game");
   if (!lessonSlug) errors.push("lesson");
   if (!sessionDate) errors.push("date");
@@ -164,8 +124,10 @@ export async function toggleFavoriteLessonAction(formData: FormData) {
 }
 
 export async function deleteClassroomAction(formData: FormData) {
-  const id = Number(formData.get("id"));
-  if (!id || Number.isNaN(id)) {
+  let id: number;
+  try {
+    id = validatePositiveInt(formData.get("id"));
+  } catch {
     redirect("/dashboard?error=classroom&fields=id");
   }
 
@@ -185,8 +147,10 @@ export async function deleteClassroomAction(formData: FormData) {
 }
 
 export async function deleteSessionAction(formData: FormData) {
-  const id = Number(formData.get("id"));
-  if (!id || Number.isNaN(id)) {
+  let id: number;
+  try {
+    id = validatePositiveInt(formData.get("id"));
+  } catch {
     redirect("/dashboard?error=session&fields=id");
   }
 

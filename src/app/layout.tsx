@@ -3,6 +3,7 @@ import "./globals.css";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { BASE_URL } from "@/lib/constants";
 
 export const viewport: Viewport = {
   themeColor: "#f8fafc",
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
     description:
       "Turn great board games into trusted, standards-aligned instruction for real classrooms.",
   },
-  metadataBase: new URL("https://learnbyplay.example.com"),
+  metadataBase: new URL(BASE_URL),
 };
 
 export default function RootLayout({

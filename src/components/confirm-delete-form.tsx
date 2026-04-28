@@ -22,6 +22,7 @@ export function ConfirmDeleteForm({
   className = "!bg-transparent !text-rose-600 !shadow-none hover:!text-rose-800 !px-2 !py-1 text-xs",
 }: ConfirmDeleteFormProps) {
   const [confirming, setConfirming] = useState(false);
+  const confirmId = `confirm-msg-${Object.values(hiddenFields).join("-")}`;
 
   if (!confirming) {
     return (
@@ -40,11 +41,12 @@ export function ConfirmDeleteForm({
       {Object.entries(hiddenFields).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
       ))}
-      <span className="text-xs text-rose-700">{confirmMessage}</span>
+      <span id={confirmId} className="text-xs text-rose-700">{confirmMessage}</span>
       <SubmitButton
         label="Confirm"
         pendingLabel={pendingLabel}
         className="!bg-rose-600 hover:!bg-rose-700 !text-white !px-2 !py-1 text-xs"
+        aria-describedby={confirmId}
       />
       <button
         type="button"

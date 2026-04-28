@@ -5,6 +5,7 @@ import { GameArt } from "@/components/game-art";
 import { SubmitButton } from "@/components/submit-button";
 import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getGames, getNearMatches, getStandards } from "@/lib/data";
+import type { SortOption } from "@/lib/types";
 import { getComplexityLabel } from "@/lib/utils";
 
 export const metadata = {
@@ -29,7 +30,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
     maxPlayTime: numberValue(params.maxPlayTime),
     groupSize: numberValue(params.groupSize),
     maxComplexity: numberValue(params.maxComplexity),
-    sort: Array.isArray(params.sort) ? params.sort[0] : params.sort,
+    sort: (Array.isArray(params.sort) ? params.sort[0] : params.sort) as SortOption | undefined,
   };
 
   const standards = getStandards();
