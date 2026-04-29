@@ -26,7 +26,8 @@ Closes #
 
 - [ ] My code follows the project's coding conventions
 - [ ] I have run `npm run lint` and it passes
-- [ ] I have run `npx tsc --noEmit` and it passes
+- [ ] I have run `npm run typecheck` and it passes
+- [ ] I have run `npm test` and it passes
 - [ ] I have run `npm run build` and it succeeds
 - [ ] I have added/updated documentation as needed
 - [ ] My changes are accessible (keyboard navigation, screen reader friendly)

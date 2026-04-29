@@ -83,6 +83,11 @@ cp .env.example .env.local
 | `npm run build` | Create production build |
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint checks |
+| `npm run typecheck` | Run TypeScript type checking |
+| `npm test` | Run unit tests |
+| `npm run test:coverage` | Run tests with coverage report |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run check` | Run all checks (lint + typecheck + test + build) |
 
 ## 📁 Project Structure
 

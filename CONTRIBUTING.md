@@ -66,8 +66,15 @@ src/
 
    ```bash
    npm run lint        # ESLint
-   npx tsc --noEmit    # Type checking
+   npm run typecheck   # TypeScript type checking
+   npm test            # Unit tests
    npm run build       # Build verification
+   ```
+
+   Or run all checks at once:
+
+   ```bash
+   npm run check       # lint + typecheck + test + build
    ```
 
 4. **Commit** with a descriptive message (see commit format below).
