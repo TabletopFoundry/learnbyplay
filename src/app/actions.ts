@@ -29,7 +29,7 @@ export async function createClassroomAction(_prevState: ActionState, formData: F
     name = validateString(formData.get("name"), 200);
     subject = validateEnum(formData.get("subject") ?? "Math", SUBJECTS);
     gradeBand = validateEnum(formData.get("gradeBand") ?? "3-5", GRADE_BANDS);
-    studentCount = Number(formData.get("studentCount") ?? 0);
+    studentCount = validatePositiveInt(formData.get("studentCount"));
   } catch (err) {
     if (err instanceof ValidationError) {
       return { success: false, errorFields: ["validation"], message: "Please check your input." };
@@ -39,7 +39,7 @@ export async function createClassroomAction(_prevState: ActionState, formData: F
 
   const errors: string[] = [];
   if (!name) errors.push("name");
-  if (Number.isNaN(studentCount) || studentCount <= 0 || studentCount > 999) errors.push("studentCount");
+  if (studentCount > 999) errors.push("studentCount");
 
   if (errors.length > 0) {
     return { success: false, errorFields: errors, message: `Please fix the following field${errors.length > 1 ? "s" : ""}: ${errors.join(", ")}.` };
@@ -84,18 +84,25 @@ export async function logSessionAction(_prevState: ActionState, formData: FormDa
   }
 
   const db = getDb();
+  const logResult = db.transaction(() => {
+    const classroomExists = db.prepare("SELECT 1 FROM classrooms WHERE id = ?").get(classroomId);
+    const gameExists = db.prepare("SELECT 1 FROM games WHERE slug = ?").get(gameSlug);
+    const lessonExists = db.prepare("SELECT 1 FROM lessons WHERE slug = ?").get(lessonSlug);
 
-  // Verify referenced entities exist before inserting
-  const classroomExists = db.prepare("SELECT 1 FROM classrooms WHERE id = ?").get(classroomId);
-  const gameExists = db.prepare("SELECT 1 FROM games WHERE slug = ?").get(gameSlug);
-  const lessonExists = db.prepare("SELECT 1 FROM lessons WHERE slug = ?").get(lessonSlug);
-  if (!classroomExists || !gameExists || !lessonExists) {
+    if (!classroomExists || !gameExists || !lessonExists) {
+      return false;
+    }
+
+    db.prepare(
+      "INSERT INTO sessions (classroom_id, game_slug, lesson_slug, session_date, notes) VALUES (?, ?, ?, ?, ?)",
+    ).run(classroomId, gameSlug, lessonSlug, sessionDate, notes);
+
+    return true;
+  })();
+
+  if (!logResult) {
     return { success: false, errorFields: ["reference"], message: "One or more selected items no longer exist. Please refresh and try again." };
   }
-
-  db.prepare(
-    "INSERT INTO sessions (classroom_id, game_slug, lesson_slug, session_date, notes) VALUES (?, ?, ?, ?, ?)",
-  ).run(classroomId, gameSlug, lessonSlug, sessionDate, notes);
 
   revalidatePath("/dashboard");
   redirect("/dashboard?logged=1");
@@ -132,15 +139,11 @@ export async function deleteClassroomAction(formData: FormData) {
   }
 
   const db = getDb();
+  const deleted = db.transaction(() => db.prepare("DELETE FROM classrooms WHERE id = ?").run(id).changes)();
 
-  // Verify the classroom exists before attempting deletion
-  const classroom = db.prepare("SELECT 1 FROM classrooms WHERE id = ?").get(id);
-  if (!classroom) {
+  if (deleted === 0) {
     redirect("/dashboard?error=not-found");
   }
-
-  // Sessions are automatically deleted via ON DELETE CASCADE
-  db.prepare("DELETE FROM classrooms WHERE id = ?").run(id);
 
   revalidatePath("/dashboard");
   redirect("/dashboard?deleted=classroom");
@@ -155,14 +158,11 @@ export async function deleteSessionAction(formData: FormData) {
   }
 
   const db = getDb();
+  const deleted = db.transaction(() => db.prepare("DELETE FROM sessions WHERE id = ?").run(id).changes)();
 
-  // Verify the session exists before attempting deletion
-  const session = db.prepare("SELECT 1 FROM sessions WHERE id = ?").get(id);
-  if (!session) {
+  if (deleted === 0) {
     redirect("/dashboard?error=not-found");
   }
-
-  db.prepare("DELETE FROM sessions WHERE id = ?").run(id);
 
   revalidatePath("/dashboard");
   redirect("/dashboard?deleted=session");
