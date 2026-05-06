@@ -39,7 +39,10 @@ export function SiteHeader() {
       }
       // Focus trap: cycle focus within the nav
       if (e.key === "Tab" && navRef.current) {
-        const focusable = navRef.current.querySelectorAll<HTMLElement>("a, button");
+        const focusable = [
+          toggleRef.current,
+          ...Array.from(navRef.current.querySelectorAll<HTMLElement>("a, button")),
+        ].filter((element): element is HTMLElement => element !== null);
         if (focusable.length === 0) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];

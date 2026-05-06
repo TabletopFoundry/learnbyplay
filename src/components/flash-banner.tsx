@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const FLASH_PARAM_KEYS = ["created", "logged", "deleted", "error", "fields"];
@@ -14,8 +14,12 @@ export function FlashBanner({ message, variant }: FlashBannerProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const cleanedRef = useRef(false);
 
   useEffect(() => {
+    if (cleanedRef.current) {
+      return;
+    }
     const params = new URLSearchParams(searchParams.toString());
     let changed = false;
     for (const key of FLASH_PARAM_KEYS) {
@@ -25,6 +29,7 @@ export function FlashBanner({ message, variant }: FlashBannerProps) {
       }
     }
     if (changed) {
+      cleanedRef.current = true;
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     }

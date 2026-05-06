@@ -12,7 +12,7 @@ vi.mock("next/cache", () => ({ revalidatePath }));
 vi.mock("next/navigation", () => ({ redirect }));
 vi.mock("@/lib/db", () => ({ getDb }));
 
-import { createClassroomAction, deleteClassroomAction, logSessionAction } from "@/app/actions";
+import { createClassroomAction, deleteClassroomAction, logSessionAction, toggleFavoriteLessonAction } from "@/app/actions";
 
 describe("actions", () => {
   beforeEach(() => {
@@ -30,8 +30,8 @@ describe("actions", () => {
 
     await expect(createClassroomAction(null, formData)).resolves.toEqual({
       success: false,
-      errorFields: ["validation"],
-      message: "Please check your input.",
+      errorFields: ["studentCount"],
+      message: "Please fix the highlighted field.",
     });
     expect(getDb).not.toHaveBeenCalled();
   });
@@ -62,7 +62,7 @@ describe("actions", () => {
 
     await expect(logSessionAction(null, formData)).resolves.toEqual({
       success: false,
-      errorFields: ["reference"],
+      errorFields: ["classroomId", "gameSlug", "lessonSlug"],
       message: "One or more selected items no longer exist. Please refresh and try again.",
     });
     expect(transaction).toHaveBeenCalledTimes(1);
@@ -78,5 +78,14 @@ describe("actions", () => {
     await expect(deleteClassroomAction(formData)).rejects.toThrow("REDIRECT:/dashboard?error=not-found");
     expect(transaction).toHaveBeenCalledTimes(1);
     expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("redirects safely when toggling a favorite with invalid input", async () => {
+    const formData = new FormData();
+    formData.set("lessonSlug", "x".repeat(201));
+    formData.set("redirectTo", "/games?subject=Math");
+
+    await expect(toggleFavoriteLessonAction(formData)).rejects.toThrow("REDIRECT:/games?subject=Math");
+    expect(getDb).not.toHaveBeenCalled();
   });
 });

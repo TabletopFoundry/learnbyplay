@@ -19,30 +19,41 @@ function getRedirectTarget(formData: FormData, fallback: string) {
   return sanitizeRedirectTo(value, fallback);
 }
 
-export async function createClassroomAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
-  let name: string;
-  let subject: string;
-  let gradeBand: string;
-  let studentCount: number;
-
+function validateField<T>(field: string, errors: Set<string>, getValue: () => T): T | undefined {
   try {
-    name = validateString(formData.get("name"), 200);
-    subject = validateEnum(formData.get("subject") ?? "Math", SUBJECTS);
-    gradeBand = validateEnum(formData.get("gradeBand") ?? "3-5", GRADE_BANDS);
-    studentCount = validatePositiveInt(formData.get("studentCount"));
+    return getValue();
   } catch (err) {
     if (err instanceof ValidationError) {
-      return { success: false, errorFields: ["validation"], message: "Please check your input." };
+      errors.add(field);
+      return undefined;
     }
     throw err;
   }
+}
 
-  const errors: string[] = [];
-  if (!name) errors.push("name");
-  if (studentCount > 999) errors.push("studentCount");
+export async function createClassroomAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
+  const errors = new Set<string>();
+  const name = validateField("name", errors, () => validateString(formData.get("name"), 200));
+  const subject = validateField("subject", errors, () => validateEnum(formData.get("subject") ?? "Math", SUBJECTS));
+  const gradeBand = validateField("gradeBand", errors, () => validateEnum(formData.get("gradeBand") ?? "3-5", GRADE_BANDS));
+  const studentCount = validateField("studentCount", errors, () => validatePositiveInt(formData.get("studentCount")));
 
-  if (errors.length > 0) {
-    return { success: false, errorFields: errors, message: `Please fix the following field${errors.length > 1 ? "s" : ""}: ${errors.join(", ")}.` };
+  if (!name) errors.add("name");
+  if (typeof studentCount === "number" && studentCount > 999) errors.add("studentCount");
+
+  if (
+    errors.size > 0 ||
+    name === undefined ||
+    subject === undefined ||
+    gradeBand === undefined ||
+    studentCount === undefined
+  ) {
+    const errorFields = Array.from(errors);
+    return {
+      success: false,
+      errorFields,
+      message: `Please fix the highlighted field${errorFields.length === 1 ? "" : "s"}.`,
+    };
   }
 
   const db = getDb();
@@ -55,32 +66,31 @@ export async function createClassroomAction(_prevState: ActionState, formData: F
 }
 
 export async function logSessionAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
-  let classroomId: number;
-  let gameSlug: string;
-  let lessonSlug: string;
-  let sessionDate: string;
-  let notes: string;
+  const errors = new Set<string>();
+  const classroomId = validateField("classroomId", errors, () => validatePositiveInt(formData.get("classroomId")));
+  const gameSlug = validateField("gameSlug", errors, () => validateString(formData.get("gameSlug"), 200));
+  const lessonSlug = validateField("lessonSlug", errors, () => validateString(formData.get("lessonSlug"), 200));
+  const sessionDate = validateField("sessionDate", errors, () => validateDate(formData.get("sessionDate")));
+  const notes = validateField("notes", errors, () => validateString(formData.get("notes"), 2000));
 
-  try {
-    classroomId = validatePositiveInt(formData.get("classroomId"));
-    gameSlug = validateString(formData.get("gameSlug"), 200);
-    lessonSlug = validateString(formData.get("lessonSlug"), 200);
-    sessionDate = validateDate(formData.get("sessionDate"));
-    notes = validateString(formData.get("notes"), 2000);
-  } catch (err) {
-    if (err instanceof ValidationError) {
-      return { success: false, errorFields: ["validation"], message: "Please check your input." };
-    }
-    throw err;
-  }
+  if (!gameSlug) errors.add("gameSlug");
+  if (!lessonSlug) errors.add("lessonSlug");
+  if (!sessionDate) errors.add("sessionDate");
 
-  const errors: string[] = [];
-  if (!gameSlug) errors.push("game");
-  if (!lessonSlug) errors.push("lesson");
-  if (!sessionDate) errors.push("date");
-
-  if (errors.length > 0) {
-    return { success: false, errorFields: errors, message: `Please complete the following field${errors.length > 1 ? "s" : ""}: ${errors.join(", ")}.` };
+  if (
+    errors.size > 0 ||
+    classroomId === undefined ||
+    gameSlug === undefined ||
+    lessonSlug === undefined ||
+    sessionDate === undefined ||
+    notes === undefined
+  ) {
+    const errorFields = Array.from(errors);
+    return {
+      success: false,
+      errorFields,
+      message: `Please fix the highlighted field${errorFields.length === 1 ? "" : "s"}.`,
+    };
   }
 
   const db = getDb();
@@ -101,7 +111,11 @@ export async function logSessionAction(_prevState: ActionState, formData: FormDa
   })();
 
   if (!logResult) {
-    return { success: false, errorFields: ["reference"], message: "One or more selected items no longer exist. Please refresh and try again." };
+    return {
+      success: false,
+      errorFields: ["classroomId", "gameSlug", "lessonSlug"],
+      message: "One or more selected items no longer exist. Please refresh and try again.",
+    };
   }
 
   revalidatePath("/dashboard");
@@ -109,8 +123,17 @@ export async function logSessionAction(_prevState: ActionState, formData: FormDa
 }
 
 export async function toggleFavoriteLessonAction(formData: FormData) {
-  const lessonSlug = validateString(formData.get("lessonSlug"), 200);
   const redirectTo = getRedirectTarget(formData, "/dashboard");
+
+  let lessonSlug: string;
+  try {
+    lessonSlug = validateString(formData.get("lessonSlug"), 200);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      redirect(redirectTo);
+    }
+    throw err;
+  }
 
   if (!lessonSlug) {
     redirect(redirectTo);
@@ -134,8 +157,11 @@ export async function deleteClassroomAction(formData: FormData) {
   let id: number;
   try {
     id = validatePositiveInt(formData.get("id"));
-  } catch {
-    redirect("/dashboard?error=classroom&fields=id");
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      redirect("/dashboard?error=classroom&fields=id");
+    }
+    throw err;
   }
 
   const db = getDb();
@@ -153,8 +179,11 @@ export async function deleteSessionAction(formData: FormData) {
   let id: number;
   try {
     id = validatePositiveInt(formData.get("id"));
-  } catch {
-    redirect("/dashboard?error=session&fields=id");
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      redirect("/dashboard?error=session&fields=id");
+    }
+    throw err;
   }
 
   const db = getDb();

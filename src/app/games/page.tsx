@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/empty-state";
 import { GameArt } from "@/components/game-art";
-import { SubmitButton } from "@/components/submit-button";
 import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getGames, getNearMatches, getStandards } from "@/lib/data";
 import type { SortOption } from "@/lib/types";
@@ -98,7 +97,12 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
             </label>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <SubmitButton label="Apply filters" pendingLabel="Filtering…" />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+            >
+              Apply filters
+            </button>
             <Link href="/games" className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900">Clear</Link>
           </div>
             </form>
@@ -133,8 +137,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {games.map((game) => (
-                <Link key={game.slug} href={`/games/${game.slug}`} aria-label={game.name} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                  <div aria-hidden="true">
+                <Link key={game.slug} href={`/games/${game.slug}`} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
                   <GameArt name={game.name} />
                   <div className="mt-4 flex flex-wrap gap-2">
                     {game.subjects.map((subject) => (
@@ -149,7 +152,6 @@ export default async function GamesPage({ searchParams }: { searchParams: Search
                     <div className="rounded-2xl bg-slate-50 p-3"><dt className="font-semibold text-slate-900">Players</dt><dd>{game.minPlayers}-{game.maxPlayers}</dd></div>
                     <div className="rounded-2xl bg-slate-50 p-3"><dt className="font-semibold text-slate-900">Standards</dt><dd>{game.standards.length}</dd></div>
                   </dl>
-                  </div>
                 </Link>
               ))}
             </div>

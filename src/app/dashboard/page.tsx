@@ -61,12 +61,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         variant="error"
       /> : null}
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Classes</p><p className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.classCount}</p></div>
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Sessions logged</p><p className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.sessionCount}</p></div>
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Saved lessons</p><p className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.favoriteCount}</p></div>
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p className="text-sm font-semibold text-slate-600">Standards covered</p><p className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.standardsCovered}</p></div>
-      </div>
+      <dl className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><dt className="text-sm font-semibold text-slate-600">Classes</dt><dd className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.classCount}</dd></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><dt className="text-sm font-semibold text-slate-600">Sessions logged</dt><dd className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.sessionCount}</dd></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><dt className="text-sm font-semibold text-slate-600">Saved lessons</dt><dd className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.favoriteCount}</dd></div>
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><dt className="text-sm font-semibold text-slate-600">Standards covered</dt><dd className="mt-2 text-3xl font-semibold text-slate-900">{snapshot.metrics.standardsCovered}</dd></div>
+      </dl>
 
       <div className="mt-8 grid gap-8 xl:grid-cols-2">
         <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="classrooms-heading">

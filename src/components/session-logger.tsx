@@ -33,7 +33,12 @@ export function SessionLogger({ classrooms, games, lessonsByGame, action }: Sess
       ) : null}
       <form action={formAction} className="mt-6 grid gap-4 md:grid-cols-2">
         <label className="text-sm font-medium text-slate-700">Class
-          <select name="classroomId" className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("class") ? "border-rose-400" : "border-slate-200"}`} required>
+          <select
+            name="classroomId"
+            required
+            aria-invalid={state?.errorFields?.includes("classroomId") || undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("classroomId") ? "border-rose-400" : "border-slate-200"}`}
+          >
             <option value="">Select a class</option>
             {classrooms.map((classroom) => <option key={classroom.id} value={classroom.id}>{classroom.name}</option>)}
           </select>
@@ -41,8 +46,9 @@ export function SessionLogger({ classrooms, games, lessonsByGame, action }: Sess
         <label className="text-sm font-medium text-slate-700">Game
           <select
             name="gameSlug"
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("game") ? "border-rose-400" : "border-slate-200"}`}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("gameSlug") ? "border-rose-400" : "border-slate-200"}`}
             required
+            aria-invalid={state?.errorFields?.includes("gameSlug") || undefined}
             value={selectedGameSlug}
             onChange={(e) => setSelectedGameSlug(e.target.value)}
           >
@@ -51,7 +57,12 @@ export function SessionLogger({ classrooms, games, lessonsByGame, action }: Sess
           </select>
         </label>
         <label className="text-sm font-medium text-slate-700 md:col-span-2">Lesson plan
-          <select name="lessonSlug" className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("lesson") ? "border-rose-400" : "border-slate-200"}`} required>
+          <select
+            name="lessonSlug"
+            required
+            aria-invalid={state?.errorFields?.includes("lessonSlug") || undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("lessonSlug") ? "border-rose-400" : "border-slate-200"}`}
+          >
             <option value="">
               {selectedGameSlug ? (filteredLessons.length === 0 ? "No lessons for this game" : "Select a lesson") : "Select a game first"}
             </option>
@@ -59,10 +70,21 @@ export function SessionLogger({ classrooms, games, lessonsByGame, action }: Sess
           </select>
         </label>
         <label className="text-sm font-medium text-slate-700">Session date
-          <input name="sessionDate" type="date" required className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("date") ? "border-rose-400" : "border-slate-200"}`} />
+          <input
+            name="sessionDate"
+            type="date"
+            required
+            aria-invalid={state?.errorFields?.includes("sessionDate") || undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("sessionDate") ? "border-rose-400" : "border-slate-200"}`}
+          />
         </label>
         <label className="text-sm font-medium text-slate-700">Notes
-          <input name="notes" className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3" placeholder="Quick observation or reminder" />
+          <input
+            name="notes"
+            aria-invalid={state?.errorFields?.includes("notes") || undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("notes") ? "border-rose-400" : "border-slate-200"}`}
+            placeholder="Quick observation or reminder"
+          />
         </label>
         <div className="md:col-span-2">
           <SubmitButton label="Log session" pendingLabel="Logging…" />
