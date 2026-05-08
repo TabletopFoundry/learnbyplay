@@ -12,6 +12,15 @@ interface ClassroomFormProps {
 
 export function ClassroomForm({ subjects, gradeBands }: ClassroomFormProps) {
   const [state, formAction] = useActionState<ActionState, FormData>(createClassroomAction, null);
+  const errorFields = new Set(state?.errorFields ?? []);
+  const fieldErrors = {
+    name: errorFields.has("name") ? "Enter a class name." : undefined,
+    subject: errorFields.has("subject") ? "Choose a valid subject." : undefined,
+    gradeBand: errorFields.has("gradeBand") ? "Choose a valid grade band." : undefined,
+    studentCount: errorFields.has("studentCount")
+      ? "Enter a whole-number student count between 1 and 999."
+      : undefined,
+  };
 
   return (
     <>
@@ -25,28 +34,34 @@ export function ClassroomForm({ subjects, gradeBands }: ClassroomFormProps) {
           <input
             name="name"
             required
-            aria-invalid={state?.errorFields?.includes("name") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("name") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("name") || undefined}
+            aria-describedby={fieldErrors.name ? "classroom-name-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("name") ? "border-rose-400" : "border-slate-200"}`}
             placeholder="Room 22 Fraction Lab"
           />
+          {fieldErrors.name ? <span id="classroom-name-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.name}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700">Subject
           <select
             name="subject"
-            aria-invalid={state?.errorFields?.includes("subject") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("subject") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("subject") || undefined}
+            aria-describedby={fieldErrors.subject ? "classroom-subject-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("subject") ? "border-rose-400" : "border-slate-200"}`}
           >
             {subjects.map((subject) => <option key={subject}>{subject}</option>)}
           </select>
+          {fieldErrors.subject ? <span id="classroom-subject-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.subject}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700">Grade band
           <select
             name="gradeBand"
-            aria-invalid={state?.errorFields?.includes("gradeBand") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("gradeBand") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("gradeBand") || undefined}
+            aria-describedby={fieldErrors.gradeBand ? "classroom-grade-band-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("gradeBand") ? "border-rose-400" : "border-slate-200"}`}
           >
             {gradeBands.map((gradeBand) => <option key={gradeBand}>{gradeBand}</option>)}
           </select>
+          {fieldErrors.gradeBand ? <span id="classroom-grade-band-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.gradeBand}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700">Student count
           <input
@@ -54,10 +69,12 @@ export function ClassroomForm({ subjects, gradeBands }: ClassroomFormProps) {
             type="number"
             min={1}
             required
-            aria-invalid={state?.errorFields?.includes("studentCount") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("studentCount") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("studentCount") || undefined}
+            aria-describedby={fieldErrors.studentCount ? "classroom-student-count-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("studentCount") ? "border-rose-400" : "border-slate-200"}`}
             placeholder="24"
           />
+          {fieldErrors.studentCount ? <span id="classroom-student-count-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.studentCount}</span> : null}
         </label>
         <div className="md:col-span-2">
           <SubmitButton label="Create class" pendingLabel="Creating…" />

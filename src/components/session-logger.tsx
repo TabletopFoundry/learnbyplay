@@ -18,6 +18,14 @@ interface SessionLoggerProps {
 export function SessionLogger({ classrooms, games, lessonsByGame, action }: SessionLoggerProps) {
   const [selectedGameSlug, setSelectedGameSlug] = useState("");
   const [state, formAction] = useActionState<ActionState, FormData>(action, null);
+  const errorFields = new Set(state?.errorFields ?? []);
+  const fieldErrors = {
+    classroomId: errorFields.has("classroomId") ? "Choose a class from the list." : undefined,
+    gameSlug: errorFields.has("gameSlug") ? "Choose a game from the list." : undefined,
+    lessonSlug: errorFields.has("lessonSlug") ? "Choose a lesson from the list." : undefined,
+    sessionDate: errorFields.has("sessionDate") ? "Choose a valid session date." : undefined,
+    notes: errorFields.has("notes") ? "Keep notes under 2,000 characters." : undefined,
+  };
 
   const filteredLessons = useMemo(() => {
     if (!selectedGameSlug) return [];
@@ -36,55 +44,65 @@ export function SessionLogger({ classrooms, games, lessonsByGame, action }: Sess
           <select
             name="classroomId"
             required
-            aria-invalid={state?.errorFields?.includes("classroomId") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("classroomId") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("classroomId") || undefined}
+            aria-describedby={fieldErrors.classroomId ? "session-classroom-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("classroomId") ? "border-rose-400" : "border-slate-200"}`}
           >
             <option value="">Select a class</option>
             {classrooms.map((classroom) => <option key={classroom.id} value={classroom.id}>{classroom.name}</option>)}
           </select>
+          {fieldErrors.classroomId ? <span id="session-classroom-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.classroomId}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700">Game
           <select
             name="gameSlug"
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("gameSlug") ? "border-rose-400" : "border-slate-200"}`}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("gameSlug") ? "border-rose-400" : "border-slate-200"}`}
             required
-            aria-invalid={state?.errorFields?.includes("gameSlug") || undefined}
+            aria-invalid={errorFields.has("gameSlug") || undefined}
+            aria-describedby={fieldErrors.gameSlug ? "session-game-error" : undefined}
             value={selectedGameSlug}
             onChange={(e) => setSelectedGameSlug(e.target.value)}
           >
             <option value="">Select a game</option>
             {games.map((game) => <option key={game.slug} value={game.slug}>{game.name}</option>)}
           </select>
+          {fieldErrors.gameSlug ? <span id="session-game-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.gameSlug}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700 md:col-span-2">Lesson plan
           <select
             name="lessonSlug"
             required
-            aria-invalid={state?.errorFields?.includes("lessonSlug") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("lessonSlug") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("lessonSlug") || undefined}
+            aria-describedby={fieldErrors.lessonSlug ? "session-lesson-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("lessonSlug") ? "border-rose-400" : "border-slate-200"}`}
           >
             <option value="">
               {selectedGameSlug ? (filteredLessons.length === 0 ? "No lessons for this game" : "Select a lesson") : "Select a game first"}
             </option>
             {filteredLessons.map((lesson) => <option key={lesson.slug} value={lesson.slug}>{lesson.title}</option>)}
           </select>
+          {fieldErrors.lessonSlug ? <span id="session-lesson-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.lessonSlug}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700">Session date
           <input
             name="sessionDate"
             type="date"
             required
-            aria-invalid={state?.errorFields?.includes("sessionDate") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("sessionDate") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("sessionDate") || undefined}
+            aria-describedby={fieldErrors.sessionDate ? "session-date-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("sessionDate") ? "border-rose-400" : "border-slate-200"}`}
           />
+          {fieldErrors.sessionDate ? <span id="session-date-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.sessionDate}</span> : null}
         </label>
         <label className="text-sm font-medium text-slate-700">Notes
           <input
             name="notes"
-            aria-invalid={state?.errorFields?.includes("notes") || undefined}
-            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${state?.errorFields?.includes("notes") ? "border-rose-400" : "border-slate-200"}`}
+            aria-invalid={errorFields.has("notes") || undefined}
+            aria-describedby={fieldErrors.notes ? "session-notes-error" : undefined}
+            className={`mt-2 w-full rounded-2xl border px-4 py-3 ${errorFields.has("notes") ? "border-rose-400" : "border-slate-200"}`}
             placeholder="Quick observation or reminder"
           />
+          {fieldErrors.notes ? <span id="session-notes-error" className="mt-2 block text-sm text-rose-700">{fieldErrors.notes}</span> : null}
         </label>
         <div className="md:col-span-2">
           <SubmitButton label="Log session" pendingLabel="Logging…" />
