@@ -33,12 +33,11 @@ function validateField<T>(field: string, errors: Set<string>, getValue: () => T)
 
 export async function createClassroomAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   const errors = new Set<string>();
-  const name = validateField("name", errors, () => validateString(formData.get("name"), 200));
+  const name = validateField("name", errors, () => validateString(formData.get("name"), 200, { required: true }));
   const subject = validateField("subject", errors, () => validateEnum(formData.get("subject") ?? "Math", SUBJECTS));
   const gradeBand = validateField("gradeBand", errors, () => validateEnum(formData.get("gradeBand") ?? "3-5", GRADE_BANDS));
   const studentCount = validateField("studentCount", errors, () => validatePositiveInt(formData.get("studentCount")));
 
-  if (!name) errors.add("name");
   if (typeof studentCount === "number" && studentCount > 999) errors.add("studentCount");
 
   if (
@@ -68,14 +67,11 @@ export async function createClassroomAction(_prevState: ActionState, formData: F
 export async function logSessionAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   const errors = new Set<string>();
   const classroomId = validateField("classroomId", errors, () => validatePositiveInt(formData.get("classroomId")));
-  const gameSlug = validateField("gameSlug", errors, () => validateString(formData.get("gameSlug"), 200));
-  const lessonSlug = validateField("lessonSlug", errors, () => validateString(formData.get("lessonSlug"), 200));
+  const gameSlug = validateField("gameSlug", errors, () => validateString(formData.get("gameSlug"), 200, { required: true }));
+  const lessonSlug = validateField("lessonSlug", errors, () => validateString(formData.get("lessonSlug"), 200, { required: true }));
   const sessionDate = validateField("sessionDate", errors, () => validateDate(formData.get("sessionDate")));
   const notes = validateField("notes", errors, () => validateString(formData.get("notes"), 2000));
 
-  if (!gameSlug) errors.add("gameSlug");
-  if (!lessonSlug) errors.add("lessonSlug");
-  if (!sessionDate) errors.add("sessionDate");
 
   if (
     errors.size > 0 ||
@@ -127,7 +123,7 @@ export async function toggleFavoriteLessonAction(formData: FormData) {
 
   let lessonSlug: string;
   try {
-    lessonSlug = validateString(formData.get("lessonSlug"), 200);
+    lessonSlug = validateString(formData.get("lessonSlug"), 200, { required: true });
   } catch (err) {
     if (err instanceof ValidationError) {
       redirect(redirectTo);
