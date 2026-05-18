@@ -8,7 +8,7 @@ import { FlashBanner } from "@/components/flash-banner";
 import { SessionLogger } from "@/components/session-logger";
 import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getDashboardSnapshot, getGames, getAllLessonsGroupedByGame } from "@/lib/data";
-import type { Classroom, LessonPlan, SessionRecord, SkillHeatmapEntry } from "@/lib/types";
+import type { Classroom, FavoriteLessonSummary, SessionRecord, SkillHeatmapEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -47,7 +47,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       <div className="max-w-3xl">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Teacher dashboard</p>
         <h1 className="mt-2 text-4xl font-semibold tracking-tight text-slate-900">Manage classes, track sessions, and monitor skill coverage.</h1>
-        <p className="mt-4 text-lg leading-8 text-slate-600">The dashboard seeds demo data, then stores new classes, favorites, and sessions locally in SQLite so the MVP stays fully runnable on your machine.</p>
+        <p className="mt-4 text-lg leading-8 text-slate-600">The dashboard starts with rich demo data, then stores new classes, favorites, and sessions locally in SQLite so the MVP stays fully runnable on your machine.</p>
       </div>
 
       {created ? <FlashBanner message="Class created successfully." variant="success" /> : null}
@@ -193,11 +193,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
             {snapshot.favoriteLessons.length === 0 ? (
               <EmptyState title="No saved lessons yet" description="Save a lesson from any detail page to keep your go-to plans close at hand." />
             ) : (
-              snapshot.favoriteLessons.map((lesson: LessonPlan) => (
+              snapshot.favoriteLessons.map((lesson: FavoriteLessonSummary) => (
                 <article key={lesson.slug} className="rounded-3xl bg-slate-50 p-5">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Grades {lesson.gradeBand}</p>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Grades {lesson.gradeBand}</p>
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">Saved by {lesson.savedCount} teacher{lesson.savedCount === 1 ? "" : "s"}</span>
+                  </div>
                   <h3 className="mt-2 text-lg font-semibold text-slate-900">{lesson.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{lesson.summary}</p>
+                  <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">{lesson.savedBy.join(" • ")}</p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     <Link href={`/lessons/${lesson.slug}`} className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">Open lesson</Link>
                     <a href={`/api/lessons/${lesson.slug}/pdf`} download className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-amber-300 hover:text-slate-900">PDF</a>

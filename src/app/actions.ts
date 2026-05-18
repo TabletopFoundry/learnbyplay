@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { GRADE_BANDS, SUBJECTS } from "@/lib/constants";
+import { DEFAULT_FAVORITE_TEACHER, GRADE_BANDS, SUBJECTS } from "@/lib/constants";
 import { getDb } from "@/lib/db";
 import { sanitizeRedirectTo, validateDate, validateEnum, validatePositiveInt, validateString, ValidationError } from "@/lib/validation";
 
@@ -137,9 +137,9 @@ export async function toggleFavoriteLessonAction(formData: FormData) {
 
   const db = getDb();
   db.transaction(() => {
-    const deleted = db.prepare("DELETE FROM favorites WHERE lesson_slug = ?").run(lessonSlug);
+    const deleted = db.prepare("DELETE FROM favorites WHERE lesson_slug = ? AND teacher_name = ?").run(lessonSlug, DEFAULT_FAVORITE_TEACHER);
     if (deleted.changes === 0) {
-      db.prepare("INSERT INTO favorites (lesson_slug, created_at) VALUES (?, DATE('now'))").run(lessonSlug);
+      db.prepare("INSERT INTO favorites (teacher_name, lesson_slug, created_at) VALUES (?, ?, DATE('now'))").run(DEFAULT_FAVORITE_TEACHER, lessonSlug);
     }
   })();
 

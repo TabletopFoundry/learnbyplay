@@ -22,8 +22,8 @@ LearnByPlay helps teachers find the right board game for a standard, launch a le
 
 | Feature | Description |
 |---------|-------------|
-| 🎯 **Curriculum Browser** | Filter 37+ games by subject, grade band, Common Core standard, play time, group size, and complexity |
-| 📋 **Lesson Plans** | 12 detailed, printable lesson plans with PDF export — complete with rubrics, sequences, and variants |
+| 🎯 **Curriculum Browser** | Filter 45 games by subject, grade band, Common Core standard, play time, group size, and complexity |
+| 📋 **Lesson Plans** | 21 detailed, printable lesson plans with PDF export — complete with rubrics, sequences, and variants |
 | 🧰 **Classroom Tools** | Random group generator, session timer with phase announcements, and simplified rules viewer |
 | 📊 **Teacher Dashboard** | Class management, game usage tracking, skill coverage heatmap, and favorite lessons |
 | 📚 **Professional Development** | PD articles, best practices guide, and administrator FAQ |
@@ -61,7 +61,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — the database is created and seeded automatically on first run.
+Open [http://localhost:3000](http://localhost:3000) — the database is created on first run, and the rich demo dataset seeds automatically in non-production environments.
 
 ### Environment Variables
 
@@ -74,6 +74,7 @@ cp .env.example .env.local
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `LEARNBYPLAY_DB_PATH` | `data/learnbyplay.db` | Path to the SQLite database file |
+| `LEARNBYPLAY_ENABLE_SEEDING` | `false` in production, auto-enabled elsewhere | Set to `true` if you explicitly want the demo dataset seeded in production-like environments |
 
 ### Available Scripts
 
@@ -111,7 +112,7 @@ src/
 │   └── ...
 ├── lib/
 │   ├── data/               # Data access layer (games, lessons, standards, dashboard)
-│   ├── seed/               # Database seed data (37 games, 12 lessons, 20 standards)
+│   ├── seed/               # Database seed data (45 games, 21 lessons, 30 standards, 8 classrooms, 32 sessions)
 │   ├── db.ts               # SQLite connection + schema + seeding
 │   ├── pdf.ts              # Lesson plan PDF generation
 │   ├── types.ts            # TypeScript interfaces
@@ -142,13 +143,23 @@ docs/
 
 ## 🌱 Seed Data
 
-On first run, the app auto-creates `data/learnbyplay.db` and seeds:
+The seed layer lives in `src/lib/seed/` and is applied from `src/lib/db.ts` using SQLite transactions and `ON CONFLICT` upserts so reruns refresh demo rows instead of duplicating them.
 
-- **37 games** with standards, mechanics, skills, and simplified rules
-- **20 standards** (Common Core + CASEL-aligned competencies)
-- **12 lesson plans** with rubrics, facilitation guides, and multi-duration variants
+
+When demo seeding is enabled, the app seeds `data/learnbyplay.db` transactionally and idempotently with:
+
+- **45 educational board games** spanning K-2, 3-5, 6-8, and 9-12
+- **30 standards** using real Common Core Math codes plus CASEL-aligned SEL competencies
+- **21 detailed lesson plans** with learning objectives, rubrics, reflection prompts, and multi-duration variants
 - **4 PD articles** for teacher professional development
-- **Sample data** — 2 classrooms, 6 sessions, and 2 favorites for dashboard demo
+- **8 classrooms** with varied enrollment, including rooms with zero logged sessions
+- **32 logged sessions** across classrooms, plus **11 lesson saves** from different teachers
+- Edge cases such as single-standard games and multi-grade lesson plans
+
+Production guard behavior:
+
+- Demo seeding runs automatically in development and test environments.
+- Production skips demo seeding unless `LEARNBYPLAY_ENABLE_SEEDING=true` is set explicitly.
 
 > **Reset data**: Stop the server, delete `data/learnbyplay.db`, and restart.
 

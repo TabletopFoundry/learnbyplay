@@ -9,7 +9,7 @@ import { getComplexityLabel } from "@/lib/utils";
 
 export const metadata = {
   title: "Game browser",
-  description: "Filter 37+ board games by subject, grade band, Common Core standard, play time, group size, and complexity to find the best classroom fit.",
+  description: "Filter 40+ board games by subject, grade band, Common Core standard, play time, group size, and complexity to find the best classroom fit.",
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
