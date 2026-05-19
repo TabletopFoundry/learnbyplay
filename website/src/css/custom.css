@@ -1,0 +1,200 @@
+/**
+ * LearnByPlay brand palette
+ * Accent: chalkboard teal (#0FB5A6) with warm amber (#F59E0B) highlights.
+ */
+
+:root {
+  --ifm-color-primary: #0fb5a6;
+  --ifm-color-primary-dark: #0ea395;
+  --ifm-color-primary-darker: #0d9a8d;
+  --ifm-color-primary-darkest: #0a7f74;
+  --ifm-color-primary-light: #1ccdbd;
+  --ifm-color-primary-lighter: #36d4c5;
+  --ifm-color-primary-lightest: #6fdfd4;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(15, 181, 166, 0.1);
+  --lbp-accent: #f59e0b;
+  --lbp-surface: #f7faf9;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #36d4c5;
+  --ifm-color-primary-dark: #1ccdbd;
+  --ifm-color-primary-darker: #14c2b3;
+  --ifm-color-primary-darkest: #109e92;
+  --ifm-color-primary-light: #5ddccf;
+  --ifm-color-primary-lighter: #74e1d6;
+  --ifm-color-primary-lightest: #a4eee6;
+  --docusaurus-highlighted-code-line-bg: rgba(54, 212, 197, 0.15);
+  --lbp-surface: #0f1c1b;
+}
+
+.lbp-hero {
+  position: relative;
+  padding: 6rem 1rem 4rem;
+  text-align: center;
+  background: radial-gradient(ellipse at top, rgba(15, 181, 166, 0.18), transparent 60%),
+              radial-gradient(ellipse at bottom right, rgba(245, 158, 11, 0.12), transparent 55%);
+  overflow: hidden;
+}
+
+.lbp-hero__eyebrow {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(15, 181, 166, 0.12);
+  color: var(--ifm-color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+}
+
+.lbp-hero__title {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  font-weight: 800;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.lbp-hero__title-accent {
+  background: linear-gradient(90deg, #0fb5a6, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lbp-hero__subtitle {
+  font-size: 1.2rem;
+  max-width: 720px;
+  margin: 0 auto 2rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.lbp-hero__ctas {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.lbp-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #d9fff9;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.95rem;
+  border: 1px solid rgba(54, 212, 197, 0.35);
+}
+
+.lbp-install__prompt {
+  color: var(--ifm-color-primary-light);
+  user-select: none;
+}
+
+.lbp-section {
+  padding: 4rem 1rem;
+}
+
+.lbp-section--alt {
+  background: var(--lbp-surface);
+}
+
+.lbp-section__title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.lbp-section__lede {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.lbp-features {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.lbp-feature {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  transition: transform 150ms ease, border-color 150ms ease;
+}
+
+.lbp-feature:hover {
+  transform: translateY(-2px);
+  border-color: var(--ifm-color-primary);
+}
+
+.lbp-feature__icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+
+.lbp-feature__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+
+.lbp-feature__body {
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.lbp-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.lbp-stat {
+  text-align: center;
+  padding: 1.25rem 0.5rem;
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.lbp-stat__value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ifm-color-primary);
+  line-height: 1;
+}
+
+.lbp-stat__label {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-top: 0.35rem;
+}
+
+.lbp-final {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.lbp-final h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
